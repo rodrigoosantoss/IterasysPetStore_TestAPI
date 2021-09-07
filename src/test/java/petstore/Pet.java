@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 
 public class Pet {
 
@@ -31,6 +33,9 @@ public class Pet {
         .then()
                 .log().all()
                 .statusCode(200)
+                .body("name", is("Snoopy"))
+                .body("status", is("available"))
+                .body("tags.id", contains(2021))
         ;
     }
 
