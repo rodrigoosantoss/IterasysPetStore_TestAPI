@@ -23,8 +23,8 @@ public class Pet {
         return new String(Files.readAllBytes(Paths.get(caminhoJson)));
     }
 
-    @Test (priority = 0)
-    public void incluirPet_EValida_name_status_tagId() throws IOException {
+    @Test (priority = 1)
+    public void testIncluirPet_EValida_name_status_tagId() throws IOException {
         String jsonBody = lerJson("db/pet1.json");
 
         given()
@@ -42,10 +42,11 @@ public class Pet {
         ;
     }
 
-    @Test (priority = 2)
+    @Test (priority = 3)
     public void consultarPet_EValida_name_status_idName(){
-        String petId = "9223372000666115959";
+        String petId = "9223372036854775807";
 
+        String token =
         given()
                 .contentType("application/json")
                 .log().all()
@@ -54,14 +55,17 @@ public class Pet {
         .then()
                 .log().all()
                 .statusCode(200)
-                .body("name", is("doggie"))
+                .body("name", is("fish"))
                 .body("status", is("available"))
                 .body("tags.id", contains(0))//lista usar contains
-        ;
+        .extract()
+                .path("category.name");
+        System.out.println("O Token é "+token);
+
 
     }
 
-    @Test (priority = 3)
+    @Test (priority = 2)
     public void alterarPetEnviandoJson2_EValida_StatusSold() throws IOException {
         String jsonBody = lerJson("db/pet2.json");
 
@@ -79,5 +83,26 @@ public class Pet {
          ;
 
     }
+
+    @Test (priority = 4)
+    public void excluirPet_EValidar_code_type_message(){
+        String petId = "9223372036854775807";
+
+        given()
+                .contentType("application/json")
+                .log().all()
+        .when()
+                .delete(uri+"/"+petId)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("code", is(200))
+                .body("type", is("unknown"))
+                .body("message", is(petId))
+        ;
+
+
+    }
+
 
 }
